@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title><%= content_for?(:title) ? yield(:title) : "reddit THIS!" %></title>
+
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "vendor/modernizr" %>
+  <%= javascript_include_tag "application", 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+<body>
+
+  <nav class="top-bar" data-topbar role="navigation">
+    <ul class="title-area">
+      <li class="name">
+        <h1><a href="/">reddit THIS!</a></h1>
+      </li>
+      <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+      <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+    </ul>
+
+    <section class="top-bar-section">
+      <!-- Right Nav Section -->
+      <ul class="right">
+        <li class="has-form">
+          <% unless current_user %>
+          <form action="<%= user_session_path %>" method='POST'>
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+            <div class="row collapse">
+                <button type="submit" name="commit" class="button alert">Log In</button>
+            </div>
+          </form>
+          <% else %>
+          <form action="<%= destroy_user_session_path %>" method='POST'>
+            <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>" />
+            <input name="_method" type="hidden" value="delete" />
+              <div class="row collapse">
+                <button type="submit" class="button alert">LogOut</button>
+            </div>
+          </form>
+          <% end %>
+        </li>
+        
+      </ul>
+
+      <!-- Left Nav Section -->
+      <ul class="left">
+
+      </ul>
+    </section>
+  </nav>
+
+  <div class="row">
+    <%= yield %>
+  </div>
+
+</body>
+</html>

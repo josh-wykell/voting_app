@@ -1,0 +1,75 @@
+<p id="notice"><%= notice %></p>
+
+<div class="page-header">
+  <% if current_user %>
+  <%= link_to new_post_path, class: 'btn btn-primary' do %>
+  <i class="fa fa-plus"></i>
+  New Post
+  <% end %>
+  <% end %>
+
+  <h1>Listing Posts</h1>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Title</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <%= content_tag_for(:tr, @post) do |post| %>
+      <td><%= post.user.try(:email) %></td>
+      <td><%= link_to truncate(post.title, length: 120), post.url %></td>
+      <td><%= truncate post.description, length: 120, separator: ' ' %></td>
+      
+      <td>
+        <%= link_to post do %>
+        <i class="fa fa-comment"></i>
+        <% end %>
+      </td>
+
+      <td>
+        <% if current_user && current_user.voted_posts.include?(post)%>
+          <%= link_to vote_path(vote:{voteable_id: post.id, voteable_type: "Post"}), method: 'delete' do %>
+          <i class="fa fa-arrow-down"></i>
+          <% end %>
+        <% else %>
+          <i class="fa fa-arrow-down"></i>
+        <% end %>
+        <%= pluralize(post.votes.count, "vote") %>
+        <% unless current_user && current_user.voted_posts.include?(post) %>
+          <%= link_to vote_path(vote:{voteable_id: post.id, voteable_type: "Post"}), method: 'post' do %>
+            <i class="fa fa-arrow-up"></i>
+          <% end %> 
+        <% else %>
+        <i class="fa fa-arrow-up"></i>
+        <% end %>
+      </td>
+
+      <% if current_user %>
+      <% if post.user == current_user %>
+      
+      <td>
+        <%= link_to edit_post_path(post) do %>
+        <i class="fa fa-pencil"></i>
+        <% end %>
+        <%= link_to post, method: :delete, data: { confirm: 'Are you sure?' } do %>
+        <i class="fa fa-trash"></i>
+        <% end %>
+      </td>
+
+      <% else %>
+      <% end %>
+      
+      <% end %>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @post %> 
+</div>
+

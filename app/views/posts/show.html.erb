@@ -1,0 +1,54 @@
+<p id="notice"><%= notice %></p>
+
+<div class="page-header">
+  <h1>Comments</h1>
+</div>
+
+<ul>
+  <% @post.comments.each do |comment| %>
+    <li>
+      <p><%= comment.body %></p>
+      <p class="author">by <%= comment.user %> on <%= comment.created_at.to_s(:short) %></p>
+      
+      <% if comment.user == current_user %>
+      <p>
+        <%= link_to "x", post_comment_path(@post, comment), { :method => :delete }  %>
+      </p>
+      <% end %>
+    </li>
+    <li>
+      <% if current_user && current_user.voted_comments.include?(comment)%>
+          <%= link_to vote_path(vote:{voteable_id: comment.id, voteable_type: "Comment"}), method: 'delete' do %>
+          <i class="fa fa-arrow-down"></i>
+          <% end %>
+        <% else %>
+          <i class="fa fa-arrow-down"></i>
+        <% end %>
+        <%= pluralize(comment.votes.count, "vote") %>
+        <% unless current_user && current_user.voted_comments.include?(comment) %>
+          <%= link_to vote_path(vote:{voteable_id: comment.id, voteable_type: "Comment"}), method: 'post' do %>
+            <i class="fa fa-arrow-up"></i>
+          <% end %> 
+        <% else %>
+        <i class="fa fa-arrow-up"></i>
+        <% end %>
+    </li>
+  <% end %>
+</ul>
+
+<% if current_user %>
+  <%= form_for(@post.comments.new, :url => post_comments_path(@post)) do |f| %>
+    <div class="field">
+      <%= f.label :body %><br>
+      <%= f.text_area :body %>
+    </div>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
+  <% end %>
+<% end %>
+
+
+<%= link_to 'Back', posts_path %>
+
+</dl>
